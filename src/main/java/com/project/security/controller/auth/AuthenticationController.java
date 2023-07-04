@@ -1,8 +1,8 @@
 package com.project.security.controller.auth;
 
-import com.project.security.dto.request.AuthenticationRequest;
-import com.project.security.dto.request.RegisterRequest;
-import com.project.security.dto.response.AuthenticationResponse;
+import com.project.security.dto.auth.AuthenticationRequest;
+import com.project.security.dto.auth.RegisterRequest;
+import com.project.security.dto.auth.AuthenticationResponse;
 import com.project.security.service.security.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
