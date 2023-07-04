@@ -1,16 +1,15 @@
-package com.project.security.security;
+package com.project.security.service.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.security.dto.Error;
 import com.project.security.model.token.TokenRepository;
+import com.project.security.util.WriteErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,7 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
     private final TokenRepository tokenRepository;
-    private final ObjectMapper objectMapper;
+    private final WriteErrorResponse writeErrorResponse;
 
     @Override
     protected void doFilterInternal(
@@ -38,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        final String authHeader = request.getHeader("Authorization");
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (Objects.isNull(authHeader) || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -49,16 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             email = jwtService.extractEmail(jwt);
         } catch (ExpiredJwtException exception) {
-            Error err = Error.builder()
-                    .title("Expired JWT")
-                    .info(exception.getMessage())
-                    .status(HttpStatus.UNAUTHORIZED.value())
-                    .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
-                    .build();
-
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            objectMapper.writeValue(response.getOutputStream(), err);
+            writeErrorResponse.writeErrorResponse("Expired JWT", exception.getMessage(), HttpStatus.UNAUTHORIZED, response);
             filterChain.doFilter(request, response);
             return;
         }
@@ -78,17 +68,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new WebAuthenticationDetailsSource().buildDetails(request)
                 );
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-            } else {
-                Error err = Error.builder()
-                        .title("Invalid JWT")
-                        .info("JWT is invalid")
-                        .status(HttpStatus.UNAUTHORIZED.value())
-                        .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
-                        .build();
-
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                objectMapper.writeValue(response.getOutputStream(), err);
             }
         }
         filterChain.doFilter(request, response);

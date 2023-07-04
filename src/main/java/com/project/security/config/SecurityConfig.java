@@ -1,10 +1,10 @@
 package com.project.security.config;
 
 import com.project.security.model.user.Role;
-import com.project.security.security.AccessDeniedHandlerService;
-import com.project.security.security.AuthenticationEntryPointService;
-import com.project.security.security.JwtAuthenticationFilter;
-import com.project.security.security.LogoutService;
+import com.project.security.service.security.AccessDeniedHandlerService;
+import com.project.security.service.security.AuthenticationEntryPointService;
+import com.project.security.service.security.JwtAuthenticationFilter;
+import com.project.security.service.security.LogoutService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
