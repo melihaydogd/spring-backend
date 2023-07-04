@@ -77,7 +77,7 @@ public class AuthenticationService {
 
     private AuthenticationResponse generateResponse(String jwtToken) {
         return AuthenticationResponse.builder()
-                .token(jwtToken)
+                .accessToken(jwtToken)
                 .build();
     }
 
