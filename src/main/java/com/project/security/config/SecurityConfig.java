@@ -1,6 +1,8 @@
 package com.project.security.config;
 
 import com.project.security.model.Role;
+import com.project.security.security.AccessDeniedHandlerImpl;
+import com.project.security.security.AuthenticationEntryPointImpl;
 import com.project.security.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +21,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final AuthenticationEntryPointImpl authenticationEntryPointImpl;
+    private final AccessDeniedHandlerImpl accessDeniedHandlerImpl;
     private final AuthenticationProvider authenticationProvider;
 
     @Bean
@@ -32,7 +36,12 @@ public class SecurityConfig {
                                 .requestMatchers("/demo/**")
                                 .hasRole(Role.USER.name())
                                 .anyRequest()
-                                .authenticated());
+                                .denyAll());
+
+        http.exceptionHandling(exceptionHandling ->
+                exceptionHandling
+                        .authenticationEntryPoint(authenticationEntryPointImpl)
+                        .accessDeniedHandler(accessDeniedHandlerImpl));
 
         http
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
