@@ -1,9 +1,10 @@
 package com.project.security.config;
 
-import com.project.security.model.Role;
-import com.project.security.security.AccessDeniedHandlerImpl;
-import com.project.security.security.AuthenticationEntryPointImpl;
+import com.project.security.model.user.Role;
+import com.project.security.security.AccessDeniedHandlerService;
+import com.project.security.security.AuthenticationEntryPointService;
 import com.project.security.security.JwtAuthenticationFilter;
+import com.project.security.security.LogoutService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -21,9 +23,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final AuthenticationEntryPointImpl authenticationEntryPointImpl;
-    private final AccessDeniedHandlerImpl accessDeniedHandlerImpl;
+    private final AuthenticationEntryPointService authenticationEntryPointService;
+    private final AccessDeniedHandlerService accessDeniedHandlerService;
     private final AuthenticationProvider authenticationProvider;
+    private final LogoutService logoutService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -40,8 +43,8 @@ public class SecurityConfig {
 
         http.exceptionHandling(exceptionHandling ->
                 exceptionHandling
-                        .authenticationEntryPoint(authenticationEntryPointImpl)
-                        .accessDeniedHandler(accessDeniedHandlerImpl));
+                        .authenticationEntryPoint(authenticationEntryPointService)
+                        .accessDeniedHandler(accessDeniedHandlerService));
 
         http
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
@@ -49,6 +52,13 @@ public class SecurityConfig {
         http
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        http
+                .logout(logout ->
+                        logout
+                                .logoutUrl("/auth/logout")
+                                .addLogoutHandler(logoutService)
+                                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext()));
 
         return http.build();
     }

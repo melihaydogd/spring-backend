@@ -3,9 +3,12 @@ package com.project.security.service;
 import com.project.security.dto.request.AuthenticationRequest;
 import com.project.security.dto.request.RegisterRequest;
 import com.project.security.dto.response.AuthenticationResponse;
-import com.project.security.model.Role;
-import com.project.security.model.User;
-import com.project.security.repository.UserRepository;
+import com.project.security.model.token.Token;
+import com.project.security.model.token.TokenRepository;
+import com.project.security.model.token.TokenType;
+import com.project.security.model.user.Role;
+import com.project.security.model.user.User;
+import com.project.security.model.user.UserRepository;
 import com.project.security.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +24,7 @@ import java.util.Map;
 public class AuthenticationService {
 
     private final UserRepository userRepository;
+    private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -34,8 +38,8 @@ public class AuthenticationService {
                 .role(Role.USER)
                 .build();
         userRepository.save(user);
-
-        return this.generateResponse(user);
+        String jwtToken = this.generateToken(user);
+        return generateResponse(jwtToken);
     }
 
     public AuthenticationResponse login(AuthenticationRequest request) {
@@ -45,12 +49,33 @@ public class AuthenticationService {
                         request.getPassword()
                 )
         );
-
-        return this.generateResponse((User) authenticate.getPrincipal());
+        revokeAllUserTokens((User) authenticate.getPrincipal());
+        String jwtToken = this.generateToken((User) authenticate.getPrincipal());
+        return generateResponse(jwtToken);
     }
 
-    private AuthenticationResponse generateResponse (User user) {
+    private void revokeAllUserTokens(User user) {
+        var validUserTokens = tokenRepository.findAllValidTokensByUser(user.getId());
+        if (validUserTokens.isEmpty()) return;
+        validUserTokens.forEach(token -> {
+            token.setExpired(true);
+            token.setRevoked(true);
+        });
+        tokenRepository.saveAll(validUserTokens);
+    }
+
+    private String generateToken(User user) {
         var jwtToken = jwtService.generateToken(Map.of(), user);
+        var token = Token.builder()
+                .user(user)
+                .token(jwtToken)
+                .tokenType(TokenType.BEARER)
+                .build();
+        tokenRepository.save(token);
+        return jwtToken;
+    }
+
+    private AuthenticationResponse generateResponse(String jwtToken) {
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();

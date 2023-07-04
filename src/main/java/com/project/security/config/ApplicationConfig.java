@@ -1,6 +1,6 @@
 package com.project.security.config;
 
-import com.project.security.repository.UserRepository;
+import com.project.security.model.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

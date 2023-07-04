@@ -16,7 +16,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
+public class AuthenticationEntryPointService implements AuthenticationEntryPoint {
 
     private final ObjectMapper objectMapper;
 
