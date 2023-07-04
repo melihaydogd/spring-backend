@@ -1,6 +1,7 @@
 package com.project.security.service.security;
 
 import com.project.security.dto.auth.AuthenticationRequest;
+import com.project.security.dto.auth.RefreshTokenRequest;
 import com.project.security.dto.auth.RegisterRequest;
 import com.project.security.dto.auth.AuthenticationResponse;
 import com.project.security.model.token.Token;
@@ -62,29 +63,17 @@ public class AuthenticationService {
         return generateResponse(jwtTokens);
     }
 
-    public AuthenticationResponse refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (Objects.isNull(authHeader) || !authHeader.startsWith("Bearer ")) {
-            return null;
-        }
-
-        final String refreshToken = authHeader.substring(7);
-        final String email;
-        try {
-            email = jwtService.extractEmail(refreshToken);
-        } catch (ExpiredJwtException exception) {
-            writeErrorResponse.writeErrorResponse("Expired JWT", exception.getMessage(), HttpStatus.UNAUTHORIZED, response);
-            return null;
-        }
+    public AuthenticationResponse refreshToken(RefreshTokenRequest request) throws ExpiredJwtException {
+        final String email = jwtService.extractEmail(request.getRefreshToken());
 
         if (Objects.nonNull(email)) {
             var userDetails = this.userRepository.findByEmail(email).orElseThrow();
-            if (jwtService.isTokenValid(refreshToken, userDetails)) {
+            if (jwtService.isTokenValid(request.getRefreshToken(), userDetails)) {
                 revokeAllUserTokens(userDetails);
-                String[] jwtTokens = this.generateTokens(userDetails, refreshToken);
+                String[] jwtTokens = this.generateTokens(userDetails, request.getRefreshToken());
                 return generateResponse(jwtTokens);
             } else {
-                writeErrorResponse.writeErrorResponse("Invalid JWT", "Emails do not match", HttpStatus.UNAUTHORIZED, response);
+//                throw new InvalidJWTException();
             }
         }
         return null;

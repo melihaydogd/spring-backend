@@ -1,9 +1,11 @@
 package com.project.security.controller.auth;
 
 import com.project.security.dto.auth.AuthenticationRequest;
+import com.project.security.dto.auth.RefreshTokenRequest;
 import com.project.security.dto.auth.RegisterRequest;
 import com.project.security.dto.auth.AuthenticationResponse;
 import com.project.security.service.security.AuthenticationService;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,10 +55,9 @@ public class AuthenticationController {
     )
     @PostMapping("/refreshToken")
     public ResponseEntity<AuthenticationResponse> refreshToken(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) throws IOException {
-        return ResponseEntity.ok(authenticationService.refreshToken(request, response));
+            @RequestBody RefreshTokenRequest request
+    ) throws ExpiredJwtException {
+        return ResponseEntity.ok(authenticationService.refreshToken(request));
     }
 
 }
