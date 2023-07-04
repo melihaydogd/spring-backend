@@ -7,6 +7,7 @@ import com.project.security.dto.auth.AuthenticationResponse;
 import com.project.security.service.security.AuthenticationService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,7 +30,13 @@ public class AuthenticationController {
 
     @Operation(
             description = "Registers a user",
-            summary = "Summary for register operation"
+            summary = "Summary for register operation",
+            responses = {
+                    @ApiResponse(
+                            description = "Success",
+                            responseCode = "200"
+                    )
+            }
     )
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
