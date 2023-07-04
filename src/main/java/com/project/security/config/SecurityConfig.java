@@ -34,12 +34,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth ->
                         auth
-                                .requestMatchers("/auth/**")
-                                .permitAll()
-                                .requestMatchers("/demo/**")
-                                .hasRole(Role.USER.name())
-                                .anyRequest()
-                                .denyAll());
+                                .requestMatchers("/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "swagger-ui.html").permitAll()
+                                .requestMatchers("/demo/**").hasRole(Role.USER.name())
+                                .anyRequest().denyAll());
 
         http.exceptionHandling(exceptionHandling ->
                 exceptionHandling

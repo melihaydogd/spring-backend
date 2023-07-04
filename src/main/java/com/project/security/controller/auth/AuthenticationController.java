@@ -4,6 +4,8 @@ import com.project.security.dto.auth.AuthenticationRequest;
 import com.project.security.dto.auth.RegisterRequest;
 import com.project.security.dto.auth.AuthenticationResponse;
 import com.project.security.service.security.AuthenticationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +20,15 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Tag(name = "Authentication")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
+    @Operation(
+            description = "Registers a user",
+            summary = "Summary for register operation"
+    )
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request
@@ -29,6 +36,10 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.register(request));
     }
 
+    @Operation(
+            description = "Logins a user",
+            summary = "Summary for login operation"
+    )
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(
             @RequestBody AuthenticationRequest request
@@ -36,6 +47,10 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.login(request));
     }
 
+    @Operation(
+            description = "Refreshes an access token",
+            summary = "Summary for refresh token operation"
+    )
     @PostMapping("/refreshToken")
     public ResponseEntity<AuthenticationResponse> refreshToken(
             HttpServletRequest request,
