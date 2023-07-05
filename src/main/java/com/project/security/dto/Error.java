@@ -15,6 +15,7 @@ public class Error {
     private String info;
     private int status;
     private String error;
+    private int code;
     @Builder.Default
     private String timestamp = Instant.now().toString();
 

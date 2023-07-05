@@ -16,12 +16,13 @@ public class WriteErrorResponse {
 
     private final ObjectMapper objectMapper;
 
-    public void writeErrorResponse(String title, String info, HttpStatus httpStatus, HttpServletResponse response) throws IOException {
+    public void writeErrorResponse(String title, String info, HttpStatus httpStatus, int code, HttpServletResponse response) throws IOException {
         var err = Error.builder()
                 .title(title)
                 .info(info)
                 .status(httpStatus.value())
                 .error(httpStatus.getReasonPhrase())
+                .code(code)
                 .build();
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

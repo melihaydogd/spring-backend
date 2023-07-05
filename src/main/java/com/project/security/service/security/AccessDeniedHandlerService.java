@@ -20,7 +20,7 @@ public class AccessDeniedHandlerService implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        writeErrorResponse.writeErrorResponse("Access Denied", accessDeniedException.getMessage(), HttpStatus.FORBIDDEN, response);
+        writeErrorResponse.writeErrorResponse("Access Denied", accessDeniedException.getMessage(), HttpStatus.FORBIDDEN, 1001, response);
     }
 
 }

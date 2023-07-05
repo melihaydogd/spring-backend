@@ -48,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             email = jwtService.extractEmail(jwt);
         } catch (ExpiredJwtException exception) {
-            writeErrorResponse.writeErrorResponse("Expired JWT", exception.getMessage(), HttpStatus.UNAUTHORIZED, response);
+            writeErrorResponse.writeErrorResponse("Expired JWT", exception.getMessage(), HttpStatus.UNAUTHORIZED, 1003, response);
             filterChain.doFilter(request, response);
             return;
         }

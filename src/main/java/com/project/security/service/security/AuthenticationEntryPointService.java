@@ -20,7 +20,7 @@ public class AuthenticationEntryPointService implements AuthenticationEntryPoint
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        writeErrorResponse.writeErrorResponse("Authentication Denied", authException.getMessage(), HttpStatus.UNAUTHORIZED, response);
+        writeErrorResponse.writeErrorResponse("Authentication Denied", authException.getMessage(), HttpStatus.UNAUTHORIZED, 1002, response);
     }
 
 }
