@@ -4,6 +4,8 @@ import com.project.security.dto.auth.AuthenticationRequest;
 import com.project.security.dto.auth.RefreshTokenRequest;
 import com.project.security.dto.auth.RegisterRequest;
 import com.project.security.dto.auth.AuthenticationResponse;
+import com.project.security.exception.InvalidJWTException;
+import com.project.security.exception.UserAlreadyExistsException;
 import com.project.security.service.security.AuthenticationService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,7 +44,7 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
             @Valid @RequestBody RegisterRequest request
-    ) {
+    ) throws UserAlreadyExistsException {
         return ResponseEntity.ok(authenticationService.register(request));
     }
 
@@ -64,7 +66,7 @@ public class AuthenticationController {
     @PostMapping("/refreshToken")
     public ResponseEntity<AuthenticationResponse> refreshToken(
             @Valid @RequestBody RefreshTokenRequest request
-    ) throws ExpiredJwtException {
+    ) throws ExpiredJwtException, InvalidJWTException {
         return ResponseEntity.ok(authenticationService.refreshToken(request));
     }
 

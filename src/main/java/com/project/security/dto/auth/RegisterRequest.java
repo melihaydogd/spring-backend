@@ -1,6 +1,7 @@
 package com.project.security.dto.auth;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +23,7 @@ public class RegisterRequest {
     private String lastName;
 
     @NotBlank(message = "Email required")
+    @Email(message = "Email not valid")
     @Schema(example = "amelih6@gmail.com")
     private String email;
 

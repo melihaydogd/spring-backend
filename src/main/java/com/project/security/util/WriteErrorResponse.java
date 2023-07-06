@@ -1,7 +1,7 @@
 package com.project.security.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.security.dto.Error;
+import com.project.security.exception.Error;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

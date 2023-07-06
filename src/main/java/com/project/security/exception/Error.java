@@ -1,4 +1,4 @@
-package com.project.security.dto;
+package com.project.security.exception;
 
 import lombok.Builder;
 import lombok.Getter;

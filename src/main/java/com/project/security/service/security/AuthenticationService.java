@@ -4,26 +4,22 @@ import com.project.security.dto.auth.AuthenticationRequest;
 import com.project.security.dto.auth.RefreshTokenRequest;
 import com.project.security.dto.auth.RegisterRequest;
 import com.project.security.dto.auth.AuthenticationResponse;
+import com.project.security.exception.InvalidJWTException;
+import com.project.security.exception.UserAlreadyExistsException;
 import com.project.security.model.token.Token;
 import com.project.security.model.token.TokenRepository;
 import com.project.security.model.token.TokenType;
 import com.project.security.model.user.Role;
 import com.project.security.model.user.User;
 import com.project.security.model.user.UserRepository;
-import com.project.security.util.WriteErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
@@ -36,9 +32,9 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final WriteErrorResponse writeErrorResponse;
 
-    public AuthenticationResponse register(RegisterRequest request) {
+    public AuthenticationResponse register(RegisterRequest request) throws UserAlreadyExistsException {
+        if (Objects.nonNull(userRepository.findByEmail(request.getEmail()))) throw new UserAlreadyExistsException("This email is being used");
         var user = User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
@@ -63,7 +59,7 @@ public class AuthenticationService {
         return generateResponse(jwtTokens);
     }
 
-    public AuthenticationResponse refreshToken(RefreshTokenRequest request) throws ExpiredJwtException {
+    public AuthenticationResponse refreshToken(RefreshTokenRequest request) throws ExpiredJwtException, InvalidJWTException {
         final String email = jwtService.extractEmail(request.getRefreshToken());
 
         if (Objects.nonNull(email)) {
@@ -73,7 +69,7 @@ public class AuthenticationService {
                 String[] jwtTokens = this.generateTokens(userDetails, request.getRefreshToken());
                 return generateResponse(jwtTokens);
             } else {
-//                throw new InvalidJWTException();
+                throw new InvalidJWTException("Emails do not match");
             }
         }
         return null;
