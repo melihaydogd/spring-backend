@@ -46,13 +46,6 @@ public class Token {
     private TokenType tokenType;
 
     @Column(
-            name = "expired",
-            nullable = false,
-            columnDefinition = "boolean default false"
-    )
-    private boolean expired;
-
-    @Column(
             name = "revoked",
             nullable = false,
             columnDefinition = "boolean default false"

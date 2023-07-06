@@ -83,7 +83,6 @@ public class AuthenticationService {
         var validUserTokens = tokenRepository.findAllValidTokensByUser(user.getId());
         if (validUserTokens.isEmpty()) return;
         validUserTokens.forEach(token -> {
-            token.setExpired(true);
             token.setRevoked(true);
         });
         tokenRepository.saveAll(validUserTokens);
