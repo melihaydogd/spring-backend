@@ -35,7 +35,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) throws UserAlreadyExistsException {
-        if (Objects.nonNull(userRepository.findByEmail(request.getEmail()))) throw new UserAlreadyExistsException("This email is being used");
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) throw new UserAlreadyExistsException("This email is being used");
         User user = User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
@@ -61,6 +61,7 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse refreshToken(RefreshTokenRequest request) throws ExpiredJwtException, InvalidJWTException {
+        if (tokenRepository.findByToken(request.getRefreshToken()).isPresent()) throw new InvalidJWTException("This is not a refresh token");
         final String email = jwtService.extractEmail(request.getRefreshToken());
 
         if (Objects.nonNull(email)) {
@@ -87,6 +88,7 @@ public class AuthenticationService {
 
     private String[] generateTokens(User user, String refreshToken) {
         String jwtAccessToken = jwtService.generateToken(Map.of(), user);
+        System.out.println(jwtAccessToken);
         String jwtRefreshToken = Objects.isNull(refreshToken) ? jwtService.generateRefreshToken(user) : refreshToken;
         Token token = Token.builder()
                 .user(user)

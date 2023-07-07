@@ -11,6 +11,7 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -26,10 +27,10 @@ public class LogoutService implements LogoutHandler {
         }
 
         final String jwt = authHeader.substring(7);
-        Token storedToken = tokenRepository.findByToken(jwt).orElse(null);
-        if (Objects.nonNull(storedToken)) {
-            storedToken.setRevoked(true);
-            tokenRepository.save(storedToken);
+        Optional<Token> storedToken = tokenRepository.findByToken(jwt);
+        if (storedToken.isPresent()) {
+            storedToken.get().setRevoked(true);
+            tokenRepository.save(storedToken.get());
         }
     }
 

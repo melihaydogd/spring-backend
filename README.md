@@ -9,6 +9,7 @@ Following features are implemented:
 * Logout mechanism (Sent request to /api/v1/auth/logout endpoint to revoke JWT token)
 * Swagger interface (You can access to Swagger UI from this endpoint http://localhost:8080/api/v1/swagger-ui/index.html)
 * Global exception handling
+* MVC unit testing with JUnit5
 
 ## Database
 
