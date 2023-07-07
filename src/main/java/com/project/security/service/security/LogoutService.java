@@ -1,5 +1,6 @@
 package com.project.security.service.security;
 
+import com.project.security.model.token.Token;
 import com.project.security.model.token.TokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,7 +26,7 @@ public class LogoutService implements LogoutHandler {
         }
 
         final String jwt = authHeader.substring(7);
-        var storedToken = tokenRepository.findByToken(jwt).orElse(null);
+        Token storedToken = tokenRepository.findByToken(jwt).orElse(null);
         if (Objects.nonNull(storedToken)) {
             storedToken.setRevoked(true);
             tokenRepository.save(storedToken);

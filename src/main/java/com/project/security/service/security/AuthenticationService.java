@@ -20,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -35,7 +36,7 @@ public class AuthenticationService {
 
     public AuthenticationResponse register(RegisterRequest request) throws UserAlreadyExistsException {
         if (Objects.nonNull(userRepository.findByEmail(request.getEmail()))) throw new UserAlreadyExistsException("This email is being used");
-        var user = User.builder()
+        User user = User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .email(request.getEmail())
@@ -63,10 +64,10 @@ public class AuthenticationService {
         final String email = jwtService.extractEmail(request.getRefreshToken());
 
         if (Objects.nonNull(email)) {
-            var userDetails = this.userRepository.findByEmail(email).orElseThrow();
-            if (jwtService.isTokenValid(request.getRefreshToken(), userDetails)) {
-                revokeAllUserTokens(userDetails);
-                String[] jwtTokens = this.generateTokens(userDetails, request.getRefreshToken());
+            User user = this.userRepository.findByEmail(email).orElseThrow();
+            if (jwtService.isTokenValid(request.getRefreshToken(), user)) {
+                revokeAllUserTokens(user);
+                String[] jwtTokens = this.generateTokens(user, request.getRefreshToken());
                 return generateResponse(jwtTokens);
             } else {
                 throw new InvalidJWTException("Emails do not match");
@@ -76,7 +77,7 @@ public class AuthenticationService {
     }
 
     private void revokeAllUserTokens(User user) {
-        var validUserTokens = tokenRepository.findAllValidTokensByUser(user.getId());
+        List<Token> validUserTokens = tokenRepository.findAllValidTokensByUser(user.getId());
         if (validUserTokens.isEmpty()) return;
         validUserTokens.forEach(token -> {
             token.setRevoked(true);
@@ -85,9 +86,9 @@ public class AuthenticationService {
     }
 
     private String[] generateTokens(User user, String refreshToken) {
-        var jwtAccessToken = jwtService.generateToken(Map.of(), user);
-        var jwtRefreshToken = Objects.isNull(refreshToken) ? jwtService.generateRefreshToken(user) : refreshToken;
-        var token = Token.builder()
+        String jwtAccessToken = jwtService.generateToken(Map.of(), user);
+        String jwtRefreshToken = Objects.isNull(refreshToken) ? jwtService.generateRefreshToken(user) : refreshToken;
+        Token token = Token.builder()
                 .user(user)
                 .token(jwtAccessToken)
                 .tokenType(TokenType.BEARER)
