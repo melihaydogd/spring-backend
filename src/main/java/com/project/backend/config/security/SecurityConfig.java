@@ -1,10 +1,7 @@
-package com.project.backend.config;
+package com.project.backend.config.security;
 
 import com.project.backend.model.user.Role;
-import com.project.backend.service.security.AccessDeniedHandlerService;
-import com.project.backend.service.security.AuthenticationEntryPointService;
-import com.project.backend.service.security.JwtAuthenticationFilter;
-import com.project.backend.service.security.LogoutService;
+import com.project.backend.service.auth.LogoutService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,6 +1,7 @@
-package com.project.backend.service.security;
+package com.project.backend.config.security;
 
 import com.project.backend.model.token.TokenRepository;
+import com.project.backend.service.auth.JwtService;
 import com.project.backend.util.WriteErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;

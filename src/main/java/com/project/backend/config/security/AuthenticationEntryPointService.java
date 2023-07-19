@@ -1,4 +1,4 @@
-package com.project.backend.service.security;
+package com.project.backend.config.security;
 
 import com.project.backend.util.WriteErrorResponse;
 import jakarta.servlet.ServletException;

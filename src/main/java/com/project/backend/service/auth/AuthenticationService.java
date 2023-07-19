@@ -1,4 +1,4 @@
-package com.project.backend.service.security;
+package com.project.backend.service.auth;
 
 import com.project.backend.dto.auth.AuthenticationRequest;
 import com.project.backend.dto.auth.RefreshTokenRequest;

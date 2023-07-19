@@ -6,7 +6,7 @@ import com.project.backend.dto.auth.RegisterRequest;
 import com.project.backend.dto.auth.AuthenticationResponse;
 import com.project.backend.exception.InvalidJWTException;
 import com.project.backend.exception.UserAlreadyExistsException;
-import com.project.backend.service.security.AuthenticationService;
+import com.project.backend.service.auth.AuthenticationService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
