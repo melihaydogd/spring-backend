@@ -1,4 +1,4 @@
-package com.project.backend.service.auth;
+package com.project.backend.config.security;
 
 import com.project.backend.model.token.Token;
 import com.project.backend.model.token.TokenRepository;

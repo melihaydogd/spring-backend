@@ -4,8 +4,8 @@ import com.project.backend.dto.auth.AuthenticationRequest;
 import com.project.backend.dto.auth.RefreshTokenRequest;
 import com.project.backend.dto.auth.RegisterRequest;
 import com.project.backend.dto.auth.AuthenticationResponse;
-import com.project.backend.exception.InvalidJWTException;
-import com.project.backend.exception.UserAlreadyExistsException;
+import com.project.backend.exception.forbidden.InvalidJWTException;
+import com.project.backend.exception.badrequest.UserAlreadyExistsException;
 import com.project.backend.model.token.Token;
 import com.project.backend.model.token.TokenRepository;
 import com.project.backend.model.token.TokenType;
@@ -35,7 +35,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) throws UserAlreadyExistsException {
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) throw new UserAlreadyExistsException("This email is being used");
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) throw new UserAlreadyExistsException();
         User user = User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
@@ -61,7 +61,7 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse refreshToken(RefreshTokenRequest request) throws ExpiredJwtException, InvalidJWTException {
-        if (tokenRepository.findByToken(request.getRefreshToken()).isPresent()) throw new InvalidJWTException("This is not a refresh token");
+        if (tokenRepository.findByToken(request.getRefreshToken()).isPresent()) throw new InvalidJWTException();
         final String email = jwtService.extractEmail(request.getRefreshToken());
 
         if (Objects.nonNull(email)) {

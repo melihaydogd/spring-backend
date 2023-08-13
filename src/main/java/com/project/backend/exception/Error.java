@@ -11,8 +11,7 @@ import java.time.Instant;
 @Setter
 public class Error {
 
-    private String title;
-    private String info;
+    private String message;
     private int status;
     private String error;
     private int code;

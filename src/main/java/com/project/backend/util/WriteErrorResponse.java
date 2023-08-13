@@ -16,10 +16,9 @@ public class WriteErrorResponse {
 
     private final ObjectMapper objectMapper;
 
-    public void writeErrorResponse(String title, String info, HttpStatus httpStatus, int code, HttpServletResponse response) throws IOException {
+    public void writeErrorResponse(String info, HttpStatus httpStatus, int code, HttpServletResponse response) throws IOException {
         Error err = Error.builder()
-                .title(title)
-                .info(info)
+                .message(info)
                 .status(httpStatus.value())
                 .error(httpStatus.getReasonPhrase())
                 .code(code)
